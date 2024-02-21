@@ -16,9 +16,6 @@ import PyPDF2
 
 warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 
-
-
-
 class ResultElement:
     def __init__(self, rank, filename):
         self.rank = rank
@@ -50,12 +47,9 @@ def res(jobfile):
         LIST_OF_FILES_DOCX.append(file)
 
     LIST_OF_FILES = LIST_OF_FILES_DOC + LIST_OF_FILES_DOCX + LIST_OF_FILES_PDF
-    # LIST_OF_FILES.remove("antiword.exe")
     print("This is LIST OF FILES")
     print(LIST_OF_FILES)
 
-    # print("Total Files to Parse\t" , len(LIST_OF_PDF_FILES))
-    print("####### PARSING ########")
     for nooo,i in enumerate(LIST_OF_FILES):
         Ordered_list_Resume.append(i)
         Temp = i.split(".")
@@ -64,9 +58,6 @@ def res(jobfile):
                 print("This is PDF" , nooo)
                 with open(i,'rb') as pdf_file:
                     read_pdf = PyPDF2.PdfFileReader(pdf_file)
-                    # page = read_pdf.getPage(0)
-                    # page_content = page.extractText()
-                    # Resumes.append(Temp_pdf)
 
                     number_of_pages = read_pdf.getNumPages()
                     for page_number in range(number_of_pages): 
@@ -76,13 +67,10 @@ def res(jobfile):
                         page_content = page_content.replace('\n', ' ')
                         # page_content.replace("\r", "")
                         Temp_pdf = str(Temp_pdf) + str(page_content)
-                        # Temp_pdf.append(page_content)
-                        # print(Temp_pdf)
+                      
                     Resumes.extend([Temp_pdf])
                     Temp_pdf = ''
-                    # f = open(str(i)+str("+") , 'w')
-                    # f.write(page_content)
-                    # f.close()
+      
             except Exception as e: print(e)
         if Temp[1] == "doc" or Temp[1] == "Doc" or Temp[1] == "DOC":
             print("This is DOC" , i)
@@ -107,17 +95,12 @@ def res(jobfile):
                 c = [b]
                 Resumes.extend(c)
             except Exception as e: print(e)
-                    
-                
+                       
         if Temp[1] == "ex" or Temp[1] == "Exe" or Temp[1] == "EXE":
             print("This is EXE" , i)
             pass
 
-
-
     print("Done Parsing.")
-
-
 
     Job_Desc = 0
     LIST_OF_TXT_FILES = []
@@ -140,14 +123,10 @@ def res(jobfile):
     f.close()
 
     vectorizer = TfidfVectorizer(stop_words='english')
-    # print(text)
     vectorizer.fit(text)
     vector = vectorizer.transform(text)
 
     Job_Desc = vector.toarray()
-    # print("\n\n")
-    # print("This is job desc : " , Job_Desc)
-
     os.chdir('../')
     for i in Resumes:
 
@@ -162,7 +141,6 @@ def res(jobfile):
             Resume_Vector.append(vector.toarray())
         except:
             pass
-    # print(Resume_Vector)
 
     for i in Resume_Vector:
 
@@ -177,27 +155,18 @@ def res(jobfile):
     print(Ordered_list_Resume)
     print(Ordered_list_Resume_Score)
     flask_return = []
-    # for n,i in enumerate(Z):
-    #     print("Rankkkkk\t" , n+1, ":\t" , i)
 
     for n,i in enumerate(Z):
-        # print("Rank\t" , n+1, ":\t" , i)
-        # flask_return.append(str("Rank\t" , n+1, ":\t" , i))
         name = getfilepath(i)
         #name = name.split('.')[0]
         rank = n+1
         res = ResultElement(rank, name)
         flask_return.append(res)
-        # res.printresult()
         print(f"Rank{res.rank+1} :\t {res.filename}")
     current_directory = os.getcwd()
     print("Current directory:", current_directory)  
     os.chdir('./code')
     return flask_return
-
-
-            
-
 
 
 if __name__ == '__main__':
